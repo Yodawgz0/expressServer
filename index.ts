@@ -3,7 +3,7 @@ import { config } from "dotenv";
 config();
 
 // Replace the placeholder with your Atlas connection string
-const uri: string = process.env.DB_URI!;
+const uri: string = process.env["DB_URI"]!;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -24,6 +24,12 @@ async function run() {
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
+    const db = client.db("playerRecords");
+    const collection = db.collection("records");
+    await collection
+      .find({})
+      .toArray()
+      .then((data) => console.log(data));
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
