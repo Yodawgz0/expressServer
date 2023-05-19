@@ -1,5 +1,8 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { config } from "dotenv";
+import { router } from "./src/routes/routes.ts";
+import express from "express";
+const app = express();
 config();
 
 // Replace the placeholder with your Atlas connection string
@@ -12,6 +15,11 @@ const client = new MongoClient(uri, {
     strict: true,
     deprecationErrors: true,
   },
+});
+app.use(router);
+
+app.listen(3000, () => {
+  console.log("Listening on 3000");
 });
 
 async function run() {
@@ -26,10 +34,20 @@ async function run() {
     );
     const db = client.db("playerRecords");
     const collection = db.collection("records");
+    const doc = { name: "Neapolitan pizza", password: "round" };
+    const result = await collection.insertOne(doc);
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
     await collection
       .find({})
       .toArray()
       .then((data) => console.log(data));
+    const docDelete = {
+      _id: {
+        $eq: result.insertedId,
+      },
+    };
+    const deletedOne = await collection.deleteOne(docDelete);
+    console.log(`deleted ID: ${deletedOne.deletedCount}`);
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
