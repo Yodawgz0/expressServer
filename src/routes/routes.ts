@@ -16,8 +16,15 @@ router.post("/register", (_req: Request, res: Response) => {
     lastName: _req.body.userDetails.lastname,
     password: _req.body.userDetails.password,
   };
-  RegisterUser(userDetails);
-  res.status(200).json({ message: "User registered successfully" });
+  RegisterUser(userDetails).then((response: boolean) => {
+    res
+      .status(response ? 200 : 500)
+      .json({
+        message: response
+          ? "User registered successfully"
+          : "something went wrong",
+      });
+  });
 });
 
 export { router };

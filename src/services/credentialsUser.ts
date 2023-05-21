@@ -20,6 +20,7 @@ export async function RegisterUser({
   lastName,
   password,
 }: userRegProps) {
+  let result: boolean = false;
   try {
     // Connect the client to the server (optional starting in v4.7)
     await client.connect();
@@ -37,10 +38,17 @@ export async function RegisterUser({
       lastName: lastName,
       password: password,
     };
-    const result = await collection.insertOne(doc);
-    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+    await collection
+      .insertOne(doc)
+      .then(() => {
+        result = true;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
+    return result;
   }
 }
