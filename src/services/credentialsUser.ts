@@ -1,5 +1,5 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
-import { userRegProps } from "./IUser.ts";
+import { userLogin, userRegProps } from "./IUser.ts";
 import { config } from "dotenv";
 config();
 // Replace the placeholder with your Atlas connection string
@@ -22,14 +22,7 @@ export async function RegisterUser({
 }: userRegProps) {
   let result: boolean = false;
   try {
-    // Connect the client to the server (optional starting in v4.7)
     await client.connect();
-
-    // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
-    // console.log(
-    //   "Pinged your deployment. You successfully connected to MongoDB!"
-    // );
     const db = client.db("playerRecords");
     const collection = db.collection("users");
     const doc = {
@@ -48,6 +41,31 @@ export async function RegisterUser({
       });
   } finally {
     // Ensures that the client will close when you finish/error
+    await client.close();
+    return result;
+  }
+}
+
+export async function LoginUser({ email, password }: userLogin) {
+  await client.connect();
+  let result: string = "";
+  try {
+    const db = client.db("playerRecords");
+    const collection = db.collection("users");
+    const document = await collection.findOne({
+      email: email,
+    });
+
+    if (document !== null) {
+      if (document["password"] === password) {
+        result = "login successful";
+      } else {
+        result = "wrong password";
+      }
+    } else {
+      result = "user notfound";
+    }
+  } finally {
     await client.close();
     return result;
   }

@@ -1,12 +1,27 @@
 import express, { Request, Response } from "express";
-import { RegisterUser } from "../services/credentialsUser.ts";
-import { userRegProps } from "../services/IUser.ts";
+import { LoginUser, RegisterUser } from "../services/credentialsUser.ts";
+import { userLogin, userRegProps } from "../services/IUser.ts";
 
 const router = express.Router();
 router.use(express.json());
-router.post("/login", (_req: Request, res: Response) => {
-  console.log(_req.body.values);
-  res.status(200).json({ works: 7 });
+router.post("/login", async (_req: Request, res: Response) => {
+  const userDetails: userLogin = {
+    email: _req.body.userDetails.email,
+    password: _req.body.userDetails.password,
+  };
+  const result = await LoginUser(userDetails);
+  if (result === "user notfound") {
+    res.status(404).json({
+      message: "User Not Found",
+    });
+  } else if (result === "login successful") {
+    res.status(200).json({
+      message: "Login Successful",
+    });
+  } else if (result === "wrong password")
+    res.status(401).json({
+      message: "Wrong Password",
+    });
 });
 router.post("/register", (_req: Request, res: Response) => {
   console.log(_req.body);
@@ -17,13 +32,11 @@ router.post("/register", (_req: Request, res: Response) => {
     password: _req.body.userDetails.password,
   };
   RegisterUser(userDetails).then((response: boolean) => {
-    res
-      .status(response ? 200 : 500)
-      .json({
-        message: response
-          ? "User registered successfully"
-          : "something went wrong",
-      });
+    res.status(response ? 201 : 500).json({
+      message: response
+        ? "User Registered Successfully"
+        : "Something Went Wrong",
+    });
   });
 });
 
