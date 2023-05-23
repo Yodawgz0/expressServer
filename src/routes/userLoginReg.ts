@@ -23,6 +23,7 @@ router.post("/login", async (_req: Request, res: Response) => {
       message: "Wrong Password",
     });
 });
+
 router.post("/register", (_req: Request, res: Response) => {
   console.log(_req.body);
   const userDetails: userRegProps = {
