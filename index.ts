@@ -1,7 +1,7 @@
 import { router } from "./src/routes/userLoginReg.ts";
 import express from "express";
 import cors from "cors";
-import { playerData } from "./src/routes/playerData.ts";
+import { playerData } from "./src/routes/playerDataRoute.ts";
 const app = express();
 
 app.use(cors());

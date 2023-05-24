@@ -49,3 +49,16 @@ export async function AddPlayerData({
     return result;
   }
 }
+
+export async function getAllPlayerRecord() {
+  await client.connect();
+  const db = client.db("playerRecords");
+  const allPlayerData = db
+    .collection("playerData")
+    .find({})
+    .toArray()
+    .then((data) => {
+      return data;
+    });
+  return allPlayerData;
+}
