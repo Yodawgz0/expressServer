@@ -62,3 +62,16 @@ export async function getAllPlayerRecord() {
     });
   return allPlayerData;
 }
+
+export async function deletePlayer(
+  closestDefender: string,
+  playerName: string
+) {
+  await client.connect();
+  const db = client.db("playerRecords");
+  const deletedData = db.collection("playerData").deleteOne({
+    CLOSEST_DEFENDER: closestDefender,
+    PLAYER_NAME: playerName,
+  });
+  return deletedData;
+}
