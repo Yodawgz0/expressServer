@@ -1,6 +1,7 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { config } from "dotenv";
 import { playerprops } from "./IPlayerData.ts";
+import { ObjectId } from "bson";
 config();
 // Replace the placeholder with your Atlas connection string
 const uri: string = process.env["DB_URI"]!;
@@ -63,15 +64,11 @@ export async function getAllPlayerRecord() {
   return allPlayerData;
 }
 
-export async function deletePlayer(
-  closestDefender: string,
-  playerName: string
-) {
+export async function deletePlayer(ID: ObjectId) {
   await client.connect();
   const db = client.db("playerRecords");
   const deletedData = db.collection("playerData").deleteOne({
-    CLOSEST_DEFENDER: closestDefender,
-    PLAYER_NAME: playerName,
+    _id: ID,
   });
   return deletedData;
 }

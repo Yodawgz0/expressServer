@@ -4,6 +4,7 @@ import {
   deletePlayer,
   getAllPlayerRecord,
 } from "../services/playerdata.ts";
+import { ObjectId } from "bson";
 
 const playerData = express.Router();
 playerData.use(express.json());
@@ -26,10 +27,10 @@ playerData.get("/AllPlayerData", async (_req: Request, res: Response) => {
 });
 
 playerData.delete(
-  "/deletePlayerData/:cd&:pn",
+  "/deletePlayerData/:cd&:pn&:id",
   async (_req: Request, res: Response) => {
-    if (_req.params["cd"] && _req.params["pn"]) {
-      await deletePlayer(_req.params["cd"], _req.params["pn"])
+    if (_req.params["cd"] && _req.params["pn"] && _req.params["id"]) {
+      await deletePlayer(new ObjectId(_req.params["id"]))
         .then(() => {
           res
             .status(202)
