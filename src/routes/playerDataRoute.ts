@@ -22,8 +22,13 @@ playerData.post("/playerData", async (_req: Request, res: Response) => {
 });
 
 playerData.get("/AllPlayerData", async (_req: Request, res: Response) => {
-  const allPlayerData = await getAllPlayerRecord();
-  res.status(200).json({ data: allPlayerData });
+  await getAllPlayerRecord()
+    .then((allPlayerData) => {
+      res.status(200).json({ data: allPlayerData });
+    })
+    .catch(() => {
+      res.status(500).json({ error: "Internal Server Error" });
+    });
 });
 
 playerData.delete(
@@ -44,5 +49,9 @@ playerData.delete(
     }
   }
 );
+
+playerData.patch("/editPlayer", async (_req: Request, res: Response) => {
+  res.send(200).json("Player Data Modified Successfully");
+});
 
 export { playerData };
