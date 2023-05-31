@@ -1,4 +1,7 @@
+import { ObjectId } from "bson";
+
 export interface playerprops {
+  _id?: ObjectId;
   GAME_ID: number;
   SHOT_NUMBER: number;
   PERIOD: number;

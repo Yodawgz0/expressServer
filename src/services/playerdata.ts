@@ -72,3 +72,13 @@ export async function deletePlayer(ID: ObjectId) {
   });
   return deletedData;
 }
+
+export async function editOnePlayer(ID: ObjectId, dataEdited: playerprops) {
+  await client.connect();
+  const db = client.db("playerRecords");
+  const updatedData = await db
+    .collection("playerData")
+    .updateOne({ _id: ID }, { $set: dataEdited });
+  console.log(updatedData);
+  return updatedData;
+}

@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import {
   AddPlayerData,
   deletePlayer,
+  editOnePlayer,
   getAllPlayerRecord,
 } from "../services/playerdata.ts";
 import { ObjectId } from "bson";
@@ -50,8 +51,18 @@ playerData.delete(
   }
 );
 
-playerData.patch("/editPlayer", async (_req: Request, res: Response) => {
-  res.send(200).json("Player Data Modified Successfully");
+playerData.patch("/editPlayer/:id", async (_req: Request, res: Response) => {
+  if (_req.params["id"]) {
+    await editOnePlayer(new ObjectId(_req.params["id"]), _req.body.userDetails)
+      .then(() => {
+        res.status(200).json({ message: "Player Data Modified Successfully" });
+      })
+      .catch(() => {
+        res.status(304).json({ error: "Internal Server Error" });
+      });
+  } else {
+    res.status(400).json({ error: "Not Enough Information Recvd" });
+  }
 });
 
 export { playerData };
