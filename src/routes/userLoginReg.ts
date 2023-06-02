@@ -1,19 +1,17 @@
 import express, { Request, Response } from "express";
 import { LoginUser, RegisterUser } from "../services/credentialsUser.ts";
 import { userLogin, userRegProps } from "../services/IUser.ts";
-import { config } from "dotenv";
-import jwt from "jsonwebtoken";
-
-config();
-
-function generateAccessToken(username: string) {
-  return jwt.sign({ email: username }, process.env["JWT_TOKEN"]!, {
-    expiresIn: "1h",
-  });
-}
+import { generateAccessToken } from "../services/tokenProcess.ts";
+import { serialize } from "cookie";
 
 const router = express.Router();
 router.use(express.json());
+
+const cookieOptions = {
+  httpOnly: true,
+  expires: new Date(Date.now() + 60 * 60 * 1000), // 7 days
+  path: "/",
+};
 
 router.post("/login", async (_req: Request, res: Response) => {
   const userDetails: userLogin = {
@@ -26,11 +24,12 @@ router.post("/login", async (_req: Request, res: Response) => {
       message: "User Not Found",
     });
   } else if (result === "login successful") {
-    const token = generateAccessToken(_req.body.userDetails.email);
+    const token = await generateAccessToken(_req.body.userDetails.email);
+    console.log(0, token);
+    const cookie = serialize("jwtToken", token, cookieOptions);
+    res.setHeader("Set-Cookie", cookie);
     res.status(200).json({
       message: "Login Successful",
-      token: token,
-      payload: { email: _req.body.userDetails.email },
     });
   } else if (result === "wrong password")
     res.status(401).json({
