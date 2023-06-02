@@ -6,7 +6,7 @@ import {
   getAllPlayerRecord,
 } from "../services/playerdata.ts";
 import { ObjectId } from "bson";
-import { AccessTokenVerify } from "../services/tokenProcess.ts";
+import { AccessTokenVerify } from "../middlewares/tokenProcess.ts";
 
 const playerData = express.Router();
 playerData.use(express.json());

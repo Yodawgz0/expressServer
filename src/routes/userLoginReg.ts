@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { LoginUser, RegisterUser } from "../services/credentialsUser.ts";
 import { userLogin, userRegProps } from "../services/IUser.ts";
-import { generateAccessToken } from "../services/tokenProcess.ts";
+import { generateAccessToken } from "../middlewares/tokenProcess.ts";
 import { serialize } from "cookie";
 
 const router = express.Router();
