@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { config } from "dotenv";
-import { playerprops } from "./IPlayerData.ts";
+import { playerprops } from "../models/IPlayerData.ts";
 import { ObjectId } from "bson";
 config();
 // Replace the placeholder with your Atlas connection string

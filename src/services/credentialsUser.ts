@@ -1,5 +1,5 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
-import { userLogin, userRegProps } from "./IUser.ts";
+import { userLogin, userRegProps } from "../models/IUser.ts";
 import { config } from "dotenv";
 config();
 // Replace the placeholder with your Atlas connection string
