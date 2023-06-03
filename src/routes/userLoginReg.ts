@@ -73,4 +73,9 @@ router.get(
   }
 );
 
+router.get("/userSignOut", (_req: Request, res: Response) => {
+  res.clearCookie("jwtToken");
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
 export { router };
