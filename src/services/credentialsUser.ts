@@ -46,6 +46,26 @@ export async function RegisterUser({
   }
 }
 
+export const getUserDetails = async (email: string) => {
+  await client.connect();
+  let result: string = "";
+  try {
+    const db = client.db("playerRecords");
+    const collection = db.collection("users");
+    const document = await collection.findOne({
+      email: email,
+    });
+    if (document !== null) {
+      result = `${document["firstName"]} ${document["lastName"]}`;
+    } else {
+      result = "user notfound";
+    }
+  } finally {
+    await client.close();
+    return result;
+  }
+};
+
 export async function LoginUser({ email, password }: userLogin) {
   await client.connect();
   let result: string = "";
