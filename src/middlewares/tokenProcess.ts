@@ -16,11 +16,9 @@ export const AccessTokenVerify = (
   next: NextFunction
 ) => {
   const token = req.cookies["jwtToken"];
-  console.log(token);
   if (!token) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-
   // Verify the token
   jwt.verify(
     token,
@@ -29,10 +27,9 @@ export const AccessTokenVerify = (
       if (err) {
         return res.status(401).json({ message: "Invalid token" });
       }
-      console.log(decodedToken);
+      res.locals["userDetails"] = decodedToken;
       // Token is valid, extract the user information if needed
-      next();
-      return;
+      return next();
     }
   );
   return;

@@ -1,7 +1,14 @@
 import express, { Request, Response } from "express";
-import { LoginUser, RegisterUser } from "../services/credentialsUser.ts";
+import {
+  LoginUser,
+  RegisterUser,
+  getUserDetails,
+} from "../services/credentialsUser.ts";
 import { userLogin, userRegProps } from "../models/IUser.ts";
-import { generateAccessToken } from "../middlewares/tokenProcess.ts";
+import {
+  AccessTokenVerify,
+  generateAccessToken,
+} from "../middlewares/tokenProcess.ts";
 import { serialize } from "cookie";
 
 const router = express.Router();
@@ -25,7 +32,6 @@ router.post("/login", async (_req: Request, res: Response) => {
     });
   } else if (result === "login successful") {
     const token = await generateAccessToken(_req.body.userDetails.email);
-    console.log(0, token);
     const cookie = serialize("jwtToken", token, cookieOptions);
     res.setHeader("Set-Cookie", cookie);
     res.status(200).json({
@@ -38,7 +44,6 @@ router.post("/login", async (_req: Request, res: Response) => {
 });
 
 router.post("/register", (_req: Request, res: Response) => {
-  console.log(_req.body);
   const userDetails: userRegProps = {
     email: _req.body.userDetails.email,
     firstName: _req.body.userDetails.firstname,
@@ -53,5 +58,19 @@ router.post("/register", (_req: Request, res: Response) => {
     });
   });
 });
+
+router.get(
+  "/getUsername",
+  AccessTokenVerify,
+  async (_req: Request, res: Response) => {
+    const userDetails = await res.locals["userDetails"];
+    const result = await getUserDetails(userDetails["email"]);
+    if (result !== "user notfound") {
+      res.status(200).json({ message: result });
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
+    }
+  }
+);
 
 export { router };

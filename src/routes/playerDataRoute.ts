@@ -32,10 +32,12 @@ playerData.get(
   "/AllPlayerData",
   AccessTokenVerify,
   async (_req: Request, res: Response) => {
-    console.log(1, _req.cookies);
+    const userDetails = res.locals["userDetails"];
     await getAllPlayerRecord()
       .then((allPlayerData) => {
-        res.status(200).json({ data: allPlayerData });
+        res
+          .status(200)
+          .json({ data: allPlayerData, userEmail: userDetails.email });
       })
       .catch(() => {
         res.status(500).json({ error: "Internal Server Error" });
