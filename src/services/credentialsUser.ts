@@ -4,6 +4,7 @@ import { config } from "dotenv";
 config();
 // Replace the placeholder with your Atlas connection string
 const uri: string = process.env["DB_URI"]!;
+const dbName: string = process.env["DB_NAME"]!;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -23,7 +24,7 @@ export async function RegisterUser({
   let result: boolean = false;
   try {
     await client.connect();
-    const db = client.db("playerRecords");
+    const db = client.db(dbName);
     const collection = db.collection("users");
     const doc = {
       email: email,
@@ -55,7 +56,7 @@ export const getUserDetails = async (email: string) => {
     });
   let result: string = "";
   try {
-    const db = client.db("playerRecords");
+    const db = client.db(dbName);
     const collection = db.collection("users");
     const document = await collection.findOne({
       email: email,
@@ -80,7 +81,7 @@ export async function LoginUser({ email, password }: userLogin) {
     });
   let result: string = "";
   try {
-    const db = client.db("playerRecords");
+    const db = client.db(dbName);
     const collection = db.collection("users");
     const document = await collection.findOne({
       email: email,

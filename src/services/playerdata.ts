@@ -5,6 +5,7 @@ import { ObjectId } from "bson";
 config();
 // Replace the placeholder with your Atlas connection string
 const uri: string = process.env["DB_URI"]!;
+const dbName: string = process.env["DB_NAME"]!;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -25,8 +26,13 @@ export async function AddPlayerData({
 }: playerprops) {
   let result: boolean = false;
   try {
-    await client.connect();
-    const db = client.db("playerRecords");
+    await client
+      .connect()
+      .then()
+      .catch(() => {
+        return false;
+      });
+    const db = client.db(dbName);
     const collection = db.collection("playerData");
     const doc = {
       GAME_ID: GAME_ID,
@@ -52,8 +58,13 @@ export async function AddPlayerData({
 }
 
 export async function getAllPlayerRecord() {
-  await client.connect();
-  const db = client.db("playerRecords");
+  await client
+    .connect()
+    .then()
+    .catch(() => {
+      return false;
+    });
+  const db = client.db(dbName);
   const allPlayerData = db
     .collection("playerData")
     .find({})
@@ -66,7 +77,7 @@ export async function getAllPlayerRecord() {
 
 export async function deletePlayer(ID: ObjectId) {
   await client.connect();
-  const db = client.db("playerRecords");
+  const db = client.db(dbName);
   const deletedData = db.collection("playerData").deleteOne({
     _id: ID,
   });
@@ -74,8 +85,13 @@ export async function deletePlayer(ID: ObjectId) {
 }
 
 export async function editOnePlayer(ID: ObjectId, dataEdited: playerprops) {
-  await client.connect();
-  const db = client.db("playerRecords");
+  await client
+    .connect()
+    .then()
+    .catch(() => {
+      return false;
+    });
+  const db = client.db(dbName);
   const updatedData = await db
     .collection("playerData")
     .updateOne({ _id: ID }, { $set: dataEdited });
