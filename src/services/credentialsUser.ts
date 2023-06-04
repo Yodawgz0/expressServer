@@ -47,7 +47,12 @@ export async function RegisterUser({
 }
 
 export const getUserDetails = async (email: string) => {
-  await client.connect();
+  await client
+    .connect()
+    .then()
+    .catch(() => {
+      return false;
+    });
   let result: string = "";
   try {
     const db = client.db("playerRecords");
@@ -67,7 +72,12 @@ export const getUserDetails = async (email: string) => {
 };
 
 export async function LoginUser({ email, password }: userLogin) {
-  await client.connect();
+  await client
+    .connect()
+    .then()
+    .catch(() => {
+      return false;
+    });
   let result: string = "";
   try {
     const db = client.db("playerRecords");

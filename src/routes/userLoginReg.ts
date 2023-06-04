@@ -34,6 +34,7 @@ router.post("/login", async (_req: Request, res: Response) => {
     const token = await generateAccessToken(_req.body.userDetails.email);
     const cookie = serialize("jwtToken", token, cookieOptions);
     res.setHeader("Set-Cookie", cookie);
+    console.log(cookie);
     res.status(200).json({
       message: "Login Successful",
     });
