@@ -31,6 +31,7 @@ router.post("/login", async (_req: Request, res: Response) => {
       message: "User Not Found",
     });
   } else if (result === "login successful") {
+    res.clearCookie("jwtToken");
     const token = await generateAccessToken(_req.body.userDetails.email);
     const cookie = serialize("jwtToken", token, cookieOptions);
     res.setHeader("Set-Cookie", cookie);
