@@ -34,11 +34,10 @@ router.post("/login", async (_req: Request, res: Response) => {
     res.clearCookie("jwtToken");
     const token = await generateAccessToken(_req.body.userDetails.email);
     const cookie = serialize("jwtToken", token, cookieOptions);
-    res.setHeader("Set-Cookie", cookie);
-    console.log(cookie);
-    res.status(200).json({
+    res.setHeader("Set-Cookie", cookie).status(200).json({
       message: "Login Successful",
     });
+    console.log(cookie);
   } else if (result === "wrong password")
     res.status(401).json({
       message: "Wrong Password",
