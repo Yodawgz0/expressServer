@@ -15,18 +15,30 @@ const client = new MongoClient(uri, {
   },
 });
 
-export const uploadFileHandler = async () => {
+export const uploadFileHandler = async (file: Express.Multer.File) => {
   return new Promise((resolve, reject) => {
     const db = client.db(dbName);
     const bucket = new GridFSBucket(db, { bucketName: "fileUpload" });
-    fs.createReadStream("./cover letter.txt").pipe(
+    fs.createReadStream(file.path).pipe(
       bucket
-        .openUploadStream("myFile", {
+        .openUploadStream(file.originalname, {
           chunkSizeBytes: 1048576,
           metadata: { field: "myField", value: "myValue" },
         })
-        .on("finish", () => resolve("File Uploaded Successfully!"))
-        .on("error", () => reject("There was some problem!"))
+        .on("finish", () => {
+          fs.unlink(file.path, (error) => {
+            if (error) {
+              reject("Failed to delete the file.");
+            } else {
+              resolve("File Uploaded Successfully!");
+            }
+          });
+        })
+        .on("error", () => {
+          fs.unlink(file.path, () => {
+            reject("There was some problem!");
+          });
+        })
     );
   });
 };
