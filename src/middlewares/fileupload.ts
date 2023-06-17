@@ -42,3 +42,20 @@ export const uploadFileHandler = async (file: Express.Multer.File) => {
     );
   });
 };
+
+export const deleteFileHandler = async (filename: string) => {
+  try {
+    const db = client.db(dbName);
+    const fileDetails = await db
+      .collection("fileUpload.files")
+      .findOne({ filename: filename });
+    await db
+      .collection("fileUpload.files")
+      .findOneAndDelete({ filename: filename });
+    await db
+      .collection("fileUpload.chunks")
+      .deleteMany({ files_id: fileDetails?._id });
+  } catch (error) {
+    console.error("Error deleting file and chunks:", error);
+  }
+};
