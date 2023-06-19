@@ -59,3 +59,43 @@ export const deleteFileHandler = async (filename: string) => {
     console.error("Error deleting file and chunks:", error);
   }
 };
+
+export const getAllFilesHandler = async () => {
+  try {
+    const db = client.db(dbName);
+    const allFilesChunks = await db.collection("fileUpload.chunks");
+
+    const allFilesData = await db
+      .collection("fileUpload.files")
+      .find({})
+      .toArray();
+    if (!allFilesData || allFilesData.length === 0) {
+      throw new Error("No files found");
+    }
+    // Prepare an array to store the file objects
+    const fileObjects = [];
+    for (const file of allFilesData) {
+      let eachFile = {
+        _id: file["_id"],
+        filename: file["filename"],
+        uploadDate: file["uploadDate"],
+        content: "",
+      };
+      const chunks = await allFilesChunks
+        .find({ files_id: eachFile._id })
+        .toArray();
+      const chunksData = [];
+      for await (const chunk of chunks) {
+        chunksData.push(chunk["data"].buffer);
+      }
+      const fileObject = Buffer.concat(chunksData);
+      // Add the file content to the fileObject
+      eachFile = { ...eachFile, content: fileObject.toString() };
+
+      fileObjects.push(eachFile);
+    }
+    return fileObjects.length ? fileObjects : 0;
+  } catch (error) {
+    return error;
+  }
+};
