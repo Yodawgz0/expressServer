@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import {
   deleteFileHandler,
+  getAllFilesHandler,
   uploadFileHandler,
 } from "../middlewares/fileupload.ts";
 import multer from "multer";
@@ -44,6 +45,21 @@ uploadFile.delete(
       }
     } else {
       res.status(400).json({ message: "ID not found!" });
+    }
+  }
+);
+
+uploadFile.get(
+  "/getUploadedFiles",
+  // AccessTokenVerify,
+  async (_req: Request, res: Response) => {
+    const fileObjects = await getAllFilesHandler();
+    if (fileObjects) {
+      res.status(200).json(fileObjects);
+    } else if (fileObjects === 0) {
+      res.status(404).json({ message: "Files Not Found!" });
+    } else {
+      res.status(500).json({ message: fileObjects });
     }
   }
 );
