@@ -80,6 +80,7 @@ export const getAllFilesHandler = async () => {
         filename: file["filename"],
         uploadDate: file["uploadDate"],
         content: "",
+        filesize: file["length"],
       };
       const chunks = await allFilesChunks
         .find({ files_id: eachFile._id })
