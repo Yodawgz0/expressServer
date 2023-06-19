@@ -38,8 +38,8 @@ uploadFile.delete(
     console.log(filename);
     if (filename) {
       try {
-        const result = await deleteFileHandler(filename!); // Pass the file to the handler function
-        res.status(200).json({ message: result });
+        await deleteFileHandler(filename!); // Pass the file to the handler function
+        res.status(200).json({ message: "File Deleted SuccessFully!" });
       } catch (err) {
         res.status(500).json({ message: err });
       }
@@ -51,7 +51,7 @@ uploadFile.delete(
 
 uploadFile.get(
   "/getUploadedFiles",
-  // AccessTokenVerify,
+  AccessTokenVerify,
   async (_req: Request, res: Response) => {
     const fileObjects = await getAllFilesHandler();
     if (fileObjects) {
