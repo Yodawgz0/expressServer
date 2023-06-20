@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import {
   deleteFileHandler,
   getAllFilesHandler,
+  singleFileHandler,
   uploadFileHandler,
 } from "../middlewares/fileupload.ts";
 import multer from "multer";
@@ -63,5 +64,16 @@ uploadFile.get(
     }
   }
 );
+
+uploadFile.get("/getFile/:id", async (_req: Request, res: Response) => {
+  if (_req.params["id"]?.length) {
+    const stream = await singleFileHandler(_req.params["id"]);
+    res.set("Content-Disposition", `attachment; filename=${_req.params["id"]}`);
+    //@ts-ignore
+    stream.pipe(res);
+  } else {
+    res.status(404).json({ message: "No FileName Found!" });
+  }
+});
 
 export { uploadFile };

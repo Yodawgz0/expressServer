@@ -1,11 +1,16 @@
 import { config } from "dotenv";
-import { GridFSBucket, MongoClient, ServerApiVersion } from "mongodb";
+import { GridFSBucket, MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 import fs from "fs";
 config();
 // Replace the placeholder with your Atlas connection string
 const uri: string = process.env["DB_URI"]!;
 const dbName: string = process.env["DB_NAME"]!;
-
+export interface fileprops {
+  _id: ObjectId;
+  filename: string;
+  uploadDate: string;
+  filesize: string;
+}
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -63,7 +68,7 @@ export const deleteFileHandler = async (filename: string) => {
 export const getAllFilesHandler = async () => {
   try {
     const db = client.db(dbName);
-    const allFilesChunks = await db.collection("fileUpload.chunks");
+    // const allFilesChunks = await db.collection("fileUpload.chunks")
 
     const allFilesData = await db
       .collection("fileUpload.files")
@@ -73,30 +78,43 @@ export const getAllFilesHandler = async () => {
       throw new Error("No files found");
     }
     // Prepare an array to store the file objects
-    const fileObjects = [];
+    const fileObjects: fileprops[] = [];
     for (const file of allFilesData) {
-      let eachFile = {
+      let eachFile: fileprops = {
         _id: file["_id"],
         filename: file["filename"],
         uploadDate: file["uploadDate"],
-        content: "",
+        //content: bucket.openDownloadStreamByName(file["filename"]),
         filesize: file["length"],
       };
-      const chunks = await allFilesChunks
-        .find({ files_id: eachFile._id })
-        .toArray();
-      const chunksData = [];
-      for await (const chunk of chunks) {
-        chunksData.push(chunk["data"].buffer);
-      }
-      const fileObject = Buffer.concat(chunksData);
-      // Add the file content to the fileObject
-      eachFile = { ...eachFile, content: fileObject.toString() };
+
+      // const chunks = await allFilesChunks
+      //   .find({ files_id: eachFile._id })
+      //   .toArray();
+      // const chunksData = [];
+      // for await (const chunk of chunks) {
+      //   chunksData.push(chunk["data"].buffer);
+      // }
+      // const fileObject = Buffer.concat(chunksData);
+      // // // Add the file content to the fileObject
+      //eachFile = { ...eachFile, content: bucket.openDownloadStreamByName(file["filename"]) };
 
       fileObjects.push(eachFile);
     }
-    return fileObjects.length ? fileObjects : 0;
+    return fileObjects.length ? fileObjects : [0];
   } catch (error) {
-    return error;
+    return [error];
+  }
+};
+
+export const singleFileHandler = async (filename: string) => {
+  try {
+    const db = client.db(dbName);
+    // const allFilesChunks = await db.collection("fileUpload.chunks");
+
+    const bucket = new GridFSBucket(db, { bucketName: "fileUpload" });
+    return bucket.openDownloadStreamByName(filename);
+  } catch (err) {
+    return err;
   }
 };
