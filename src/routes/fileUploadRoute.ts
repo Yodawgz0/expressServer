@@ -2,11 +2,13 @@ import express, { Request, Response } from "express";
 import {
   deleteFileHandler,
   getAllFilesHandler,
+  renameFileHandler,
   singleFileHandler,
   uploadFileHandler,
 } from "../middlewares/fileupload.ts";
 import multer from "multer";
 import { AccessTokenVerify } from "../middlewares/tokenProcess.ts";
+import { ObjectId } from "bson";
 const uploadFile = express.Router();
 uploadFile.use(express.json());
 
@@ -75,6 +77,25 @@ uploadFile.get("/getFile/:id", async (_req: Request, res: Response) => {
     res.status(404).json({ message: "No FileName Found!" });
   }
 });
-uploadFile.patch("");
+uploadFile.patch(
+  "/renamefile/:id&:newname",
+  async (_req: Request, res: Response) => {
+    if (_req.params["id"] && _req.params["newname"]) {
+      try {
+        new ObjectId(_req.params["id"]);
+        const result = await renameFileHandler(
+          _req.params["newname"],
+          new ObjectId(_req.params["id"])
+        );
+        console.log(result);
+        res.status(200).json({ message: "File Renamed SuccessFully!" });
+      } catch {
+        res.status(500).json({ message: "Network Error!" });
+      }
+    } else {
+      res.status(400).json({ message: "Need filename and file ID!" });
+    }
+  }
+);
 
 export { uploadFile };
