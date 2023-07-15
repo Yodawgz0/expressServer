@@ -68,8 +68,6 @@ export const deleteFileHandler = async (filename: string) => {
 export const getAllFilesHandler = async () => {
   try {
     const db = client.db(dbName);
-    // const allFilesChunks = await db.collection("fileUpload.chunks")
-
     const allFilesData = await db
       .collection("fileUpload.files")
       .find({})
@@ -84,21 +82,8 @@ export const getAllFilesHandler = async () => {
         _id: file["_id"],
         filename: file["filename"],
         uploadDate: file["uploadDate"],
-        //content: bucket.openDownloadStreamByName(file["filename"]),
         filesize: file["length"],
       };
-
-      // const chunks = await allFilesChunks
-      //   .find({ files_id: eachFile._id })
-      //   .toArray();
-      // const chunksData = [];
-      // for await (const chunk of chunks) {
-      //   chunksData.push(chunk["data"].buffer);
-      // }
-      // const fileObject = Buffer.concat(chunksData);
-      // // // Add the file content to the fileObject
-      //eachFile = { ...eachFile, content: bucket.openDownloadStreamByName(file["filename"]) };
-
       fileObjects.push(eachFile);
     }
     return fileObjects.length ? fileObjects : [0];
@@ -110,10 +95,18 @@ export const getAllFilesHandler = async () => {
 export const singleFileHandler = async (filename: string) => {
   try {
     const db = client.db(dbName);
-    // const allFilesChunks = await db.collection("fileUpload.chunks");
-
     const bucket = new GridFSBucket(db, { bucketName: "fileUpload" });
     return bucket.openDownloadStreamByName(filename);
+  } catch (err) {
+    return err;
+  }
+};
+
+export const renameFileHandler = async (filename: string, Id: ObjectId) => {
+  try {
+    const db = client.db(dbName);
+    const bucket = new GridFSBucket(db, { bucketName: "fileUpload" });
+    return bucket.rename(Id, filename);
   } catch (err) {
     return err;
   }
