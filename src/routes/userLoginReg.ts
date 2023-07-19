@@ -79,4 +79,8 @@ router.get("/userSignOut", (_req: Request, res: Response) => {
   res.status(200).json({ message: "Logged out successfully" });
 });
 
+router.get("/", (_req: Request, res: Response) => {
+  res.status(200).json({ message: "This is Ashley Express APP" });
+});
+
 export { router };
