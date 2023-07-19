@@ -9,7 +9,7 @@ app.use(cookies());
 app.use(
   cors({
     credentials: true,
-    origin: true,
+    origin: false,
   })
 );
 app.use(router);
