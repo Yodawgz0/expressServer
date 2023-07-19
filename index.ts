@@ -8,8 +8,8 @@ const app = express();
 app.use(cookies());
 app.use(
   cors({
+    origin: "*",
     credentials: true,
-    origin: false,
   })
 );
 app.use(router);
