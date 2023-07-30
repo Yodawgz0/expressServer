@@ -38,7 +38,6 @@ uploadFile.delete(
   AccessTokenVerify,
   async (_req: Request, res: Response) => {
     const filename = _req.params["id"];
-    console.log(filename);
     if (filename) {
       try {
         await deleteFileHandler(filename!); // Pass the file to the handler function
