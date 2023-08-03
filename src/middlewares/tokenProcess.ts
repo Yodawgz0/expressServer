@@ -6,7 +6,7 @@ config();
 
 export async function generateAccessToken(username: string) {
   return jwt.sign({ email: username }, process.env["JWT_TOKEN"]!, {
-    expiresIn: "8h",
+    expiresIn: "2h",
   });
 }
 
