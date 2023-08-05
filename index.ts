@@ -4,6 +4,8 @@ import cors from "cors";
 import { playerData } from "./src/routes/playerDataRoute.ts";
 import cookies from "cookie-parser";
 import { uploadFile } from "./src/routes/fileUploadRoute.ts";
+import serverless from "serverless-http";
+
 const app = express();
 app.use(cookies());
 app.use(
@@ -19,3 +21,5 @@ app.use(uploadFile);
 app.listen(8000, () => {
   console.log("Listening on 8000");
 });
+
+export const handler = serverless(app);
