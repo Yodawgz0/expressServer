@@ -9,6 +9,7 @@ module.exports = {
     filename: "final.js",
   },
   target: "node",
+  stats: "errors-only",
   module: {
     rules: [
       {
