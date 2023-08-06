@@ -1,9 +1,9 @@
-import { router } from "./src/routes/userLoginReg.ts";
+import { router } from "../src/routes/userLoginReg.ts";
 import express from "express";
 import cors from "cors";
-import { playerData } from "./src/routes/playerDataRoute.ts";
+import { playerData } from "../src/routes/playerDataRoute.ts";
 import cookies from "cookie-parser";
-import { uploadFile } from "./src/routes/fileUploadRoute.ts";
+import { uploadFile } from "../src/routes/fileUploadRoute.ts";
 import serverless from "serverless-http";
 
 const app = express();
