@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
   mode: "production",
-  entry: "./index.ts",
+  entry: "./api/index.ts",
   output: {
     path: path.join(__dirname, "dist"),
     publicPath: "/",

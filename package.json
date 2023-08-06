@@ -7,8 +7,9 @@
     "node": "18.x"
   },
   "scripts": {
-    "start": "nodemon --esm index.ts",
-    "build": "webpack"
+    "start": "nodemon --esm ./api/index.ts",
+    "build": "webpack",
+    "server": "nodemon --esm ./api/index.ts"
   },
   "dependencies": {
     "bson": "^5.3.0",
