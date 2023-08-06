@@ -14,7 +14,7 @@ app.use(
     credentials: true,
   })
 );
-app.use("/.netlify/functions/api", router);
+app.use("/", router);
 app.use(playerData);
 app.use(uploadFile);
 
