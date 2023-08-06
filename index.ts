@@ -14,7 +14,7 @@ app.use(
     credentials: true,
   })
 );
-app.use("/", router);
+app.use(router);
 app.use(playerData);
 app.use(uploadFile);
 
