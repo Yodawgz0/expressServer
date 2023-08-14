@@ -17,7 +17,10 @@ export const AccessTokenVerify = (
 ) => {
   const token = req.cookies["jwtToken"];
   if (!token) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res
+      .clearCookie("jwtToken")
+      .status(401)
+      .json({ message: "Unauthorized" });
   }
   // Verify the token
   jwt.verify(
