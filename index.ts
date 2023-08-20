@@ -4,7 +4,7 @@ import cors from "cors";
 import { playerData } from "./src/routes/playerDataRoute.ts";
 import cookies from "cookie-parser";
 import { uploadFile } from "./src/routes/fileUploadRoute.ts";
-import { filterPlayer } from "./src/routes/playerInfoRoute.ts";
+import { filterPlayer } from "./src/routes/playerIFilterRoute.ts";
 import serverless from "serverless-http";
 
 const app = express();
