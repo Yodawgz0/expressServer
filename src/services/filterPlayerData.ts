@@ -20,16 +20,23 @@ interface IfilterPlayer {
   $and?: IfilterPlayer[];
 }
 
-export const fetchPlayerByFilter = async (playerName = "", shotmade = "") => {
+export const fetchPlayerByFilter = async (playerName = "", shotresult = "") => {
   let query: IfilterPlayer = {};
   if (playerName && playerName.length > 0) {
     query.PLAYER_NAME = playerName;
   }
-  if (shotmade && shotmade.length > 0) {
-    query.SHOT_RESULT = shotmade;
+  if (shotresult && shotresult.length > 0) {
+    query.SHOT_RESULT = shotresult;
   }
-  if (playerName && playerName.length > 0 && shotmade && shotmade.length > 0) {
-    query = { $and: [{ PLAYER_NAME: playerName }, { SHOT_RESULT: shotmade }] };
+  if (
+    playerName &&
+    playerName.length > 0 &&
+    shotresult &&
+    shotresult.length > 0
+  ) {
+    query = {
+      $and: [{ PLAYER_NAME: playerName }, { SHOT_RESULT: shotresult }],
+    };
   }
 
   await client
