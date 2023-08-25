@@ -14,7 +14,24 @@ const client = new MongoClient(uri, {
   },
 });
 
-export const fetchPlayerByName = async (playerName) => {
+interface IfilterPlayer {
+  PLAYER_NAME?: string;
+  SHOT_RESULT?: string;
+  $and?: IfilterPlayer[];
+}
+
+export const fetchPlayerByFilter = async (playerName = "", shotmade = "") => {
+  let query: IfilterPlayer = {};
+  if (playerName && playerName.length > 0) {
+    query.PLAYER_NAME = playerName;
+  }
+  if (shotmade && shotmade.length > 0) {
+    query.SHOT_RESULT = shotmade;
+  }
+  if (playerName && playerName.length > 0 && shotmade && shotmade.length > 0) {
+    query = { $and: [{ PLAYER_NAME: playerName }, { SHOT_RESULT: shotmade }] };
+  }
+
   await client
     .connect()
     .then()
@@ -22,9 +39,7 @@ export const fetchPlayerByName = async (playerName) => {
       return false;
     });
   const db = client.db(dbName);
-  const namedPlayers = await db
-    .collection("playerData")
-    .find({ PLAYER_NAME: playerName });
+  const namedPlayers = await db.collection("playerData").find(query);
   return namedPlayers.toArray();
 };
 
