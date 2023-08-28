@@ -38,6 +38,7 @@ export const fetchPlayerByFilter = async (playerName = "", shotresult = "") => {
       $and: [{ PLAYER_NAME: playerName }, { SHOT_RESULT: shotresult }],
     };
   }
+  console.log(query);
 
   await client
     .connect()
@@ -65,11 +66,6 @@ export const fetchDistinctPlayersName = async () => {
         names: {
           $addToSet: "$PLAYER_NAME",
         },
-      },
-    },
-    {
-      $sort: {
-        names: 1,
       },
     },
   ]);

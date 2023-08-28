@@ -9,16 +9,12 @@ const filterPlayer = express.Router();
 
 filterPlayer.get(
   "/playerDataFilter/PLAYERNAME:playername?&SHOTRESULT:shotresult?",
+  AccessTokenVerify,
   async (_req: Request, res: Response) => {
     if (
       _req.params["playername"]?.substring(1) ||
       _req.params["shotresult"]?.substring(1)
     ) {
-      console.log(
-        _req.params["playername"]?.substring(1).length
-          ? _req.params["playername"]?.substring(1)
-          : ""
-      );
       const namedPlayers = await fetchPlayerByFilter(
         _req.params["playername"]?.substring(1).length
           ? _req.params["playername"]?.substring(1)
