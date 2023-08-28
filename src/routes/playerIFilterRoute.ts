@@ -14,8 +14,15 @@ filterPlayer.get(
       _req.params["playername"]?.substring(1) ||
       _req.params["shotresult"]?.substring(1)
     ) {
+      console.log(
+        _req.params["playername"]?.substring(1).length
+          ? _req.params["playername"]?.substring(1)
+          : ""
+      );
       const namedPlayers = await fetchPlayerByFilter(
-        _req.params["playername"]?.substring(1) || "",
+        _req.params["playername"]?.substring(1).length
+          ? _req.params["playername"]?.substring(1)
+          : "",
         _req.params["shotresult"]?.substring(1) || ""
       );
       res.send({ data: namedPlayers }).status(200);
