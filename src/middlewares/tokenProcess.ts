@@ -1,10 +1,24 @@
 import { config } from "dotenv";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { createClient } from "redis";
 
 config();
+const uri: string = process.env["DB_URL"]!;
+const password: string = process.env["PASSWORD"]!;
+const port: string = process.env["PORT"]!;
+
+const client = createClient({
+  password: password,
+  socket: {
+    host: uri,
+    port: parseInt(port),
+  },
+});
 
 export async function generateAccessToken(username: string) {
+  await client.connect();
+  client.set("okay", 6);
   return jwt.sign({ email: username }, process.env["JWT_TOKEN"]!, {
     expiresIn: "2h",
   });
