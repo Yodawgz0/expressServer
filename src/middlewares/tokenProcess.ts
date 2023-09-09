@@ -4,9 +4,9 @@ import jwt from "jsonwebtoken";
 import { createClient } from "redis";
 
 config();
-const uri: string = process.env["DB_URL"]!;
-const password: string = process.env["PASSWORD"]!;
-const port: string = process.env["PORT"]!;
+const uri: string = process.env["REDIS_DB_URL"]!;
+const password: string = process.env["REDIS_PASSWORD"]!;
+const port: string = process.env["REDIS_PORT"]!;
 
 const client = createClient({
   password: password,
