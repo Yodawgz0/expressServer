@@ -18,10 +18,11 @@ const client = createClient({
 
 export async function generateAccessToken(username: string) {
   await client.connect();
-  client.set("okay", 6);
-  return jwt.sign({ email: username }, process.env["JWT_TOKEN"]!, {
-    expiresIn: "2h",
+  const jwtToken = jwt.sign({ email: username }, process.env["JWT_TOKEN"]!, {
+    expiresIn: "3h",
   });
+  client.set("jwtToken", jwtToken);
+  return jwtToken;
 }
 
 export const AccessTokenVerify = (
