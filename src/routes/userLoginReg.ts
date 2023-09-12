@@ -10,15 +10,32 @@ import {
   generateAccessToken,
 } from "../middlewares/tokenProcess.ts";
 import { serialize } from "cookie";
+import { config } from "dotenv";
+import { createClient } from "redis";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 router.use(express.json());
+
+config();
+
+const uri: string = process.env["REDIS_DB_URL"]!;
+const password: string = process.env["REDIS_PASSWORD"]!;
+const port: string = process.env["REDIS_PORT"]!;
 
 const cookieOptions = {
   httpOnly: true,
   expires: new Date(Date.now() + 60 * 60 * 1000), // 7 days
   path: "/",
 };
+
+const client = createClient({
+  password: password,
+  socket: {
+    host: uri,
+    port: parseInt(port),
+  },
+});
 
 router.post("/login", async (_req: Request, res: Response) => {
   const userDetails: userLogin = {
