@@ -25,7 +25,7 @@ const port: string = process.env["REDIS_PORT"]!;
 
 const cookieOptions = {
   httpOnly: true,
-  expires: new Date(Date.now() + 60 * 60 * 1000), // 7 days
+  expires: new Date(Date.now() + 120 * 60 * 1000), // 2hrs
   path: "/",
 };
 
@@ -54,7 +54,13 @@ router.post("/login", async (_req: Request, res: Response) => {
     res.setHeader("Set-Cookie", cookie).status(200).json({
       message: "Login Successful",
     });
-    console.log(cookie);
+    jwt.verify(
+      token,
+      process.env["JWT_TOKEN"]!,
+      (_err: any, decodedToken: any) => {
+        res.locals["userDetails"] = decodedToken;
+      }
+    );
   } else if (result === "wrong password")
     res.status(401).json({
       message: "Wrong Password",
@@ -91,10 +97,20 @@ router.get(
   }
 );
 
-router.get("/userSignOut", (_req: Request, res: Response) => {
-  res.clearCookie("jwtToken");
-  res.status(200).json({ message: "Logged out successfully" });
-});
+router.get(
+  "/userSignOut",
+  AccessTokenVerify,
+  async (_req: Request, res: Response) => {
+    const userDetails = await res.locals["userDetails"];
+    console.log(userDetails);
+    const result = await getUserDetails(userDetails["email"]);
+    await client.connect();
+    client.del(result);
+    res.clearCookie("jwtToken");
+    await client.disconnect();
+    res.status(200).json({ message: "Logged out successfully" });
+  }
+);
 
 router.get("/", (_req: Request, res: Response) => {
   res.status(200).json({ message: "This is Ashley Express APP" });
