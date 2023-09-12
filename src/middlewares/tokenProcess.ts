@@ -17,11 +17,24 @@ const client = createClient({
 });
 
 export async function generateAccessToken(username: string) {
-  await client.connect();
+  await client
+    .connect()
+    .then(() => {})
+    .catch((err) => console.log(err));
   const jwtToken = jwt.sign({ email: username }, process.env["JWT_TOKEN"]!, {
-    expiresIn: "3h",
+    expiresIn: "2h",
   });
-  client.set("jwtToken", jwtToken);
+  client
+    .set(
+      username,
+      JSON.stringify({
+        jwtToken: jwtToken,
+        loggedIn: new Date().toLocaleString(),
+      })
+    )
+    .then()
+    .catch((err) => console.log(err));
+    
   return jwtToken;
 }
 
