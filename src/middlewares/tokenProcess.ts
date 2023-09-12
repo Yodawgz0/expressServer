@@ -34,16 +34,20 @@ export async function generateAccessToken(username: string) {
     )
     .then()
     .catch((err) => console.log(err));
-    
+
   return jwtToken;
 }
 
-export const AccessTokenVerify = (
+export const AccessTokenVerify = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const token = req.cookies["jwtToken"];
+  await client
+    .connect()
+    .then(() => {})
+    .catch(() => {});
   if (!token) {
     return res
       .clearCookie("jwtToken")
@@ -63,5 +67,6 @@ export const AccessTokenVerify = (
       return next();
     }
   );
+  await client.disconnect();
   return;
 };
