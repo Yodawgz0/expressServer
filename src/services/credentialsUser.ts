@@ -2,11 +2,9 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 import { userLogin, userRegProps } from "../models/IUser.ts";
 import { config } from "dotenv";
 config();
-// Replace the placeholder with your Atlas connection string
 const uri: string = process.env["DB_URI"]!;
 const dbName: string = process.env["DB_NAME"]!;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
