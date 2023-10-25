@@ -1,5 +1,6 @@
 # expressServer
-wow
+if it isn't daily commits
+
 It connects to mondoDB Atlas , will perform CRUD ops
  .
 It has typescipt
