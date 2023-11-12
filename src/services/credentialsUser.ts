@@ -1,7 +1,7 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { userLogin, userRegProps } from "../models/IUser.ts";
 import { config } from "dotenv";
-config();
+config(); 
 const uri: string = process.env["DB_URI"]!;
 const dbName: string = process.env["DB_NAME"]!;
 
