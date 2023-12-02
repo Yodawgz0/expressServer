@@ -87,7 +87,6 @@ router.get(
   "/getUsername",
   AccessTokenVerify,
   async (_req: Request, res: Response) => {
-    console.log(res.locals);
     const userDetails = await res.locals["userDetails"];
     const result = await getUserDetails(userDetails["email"]);
     if (result !== "user notfound") {
@@ -108,7 +107,6 @@ router.get(
     await client.connect();
     client.del(result);
     res.clearCookie("jwtToken");
-    await client.disconnect();
     res.status(200).json({ message: "Logged out successfully" });
   }
 );
