@@ -67,6 +67,5 @@ export const AccessTokenVerify = async (
       return next();
     }
   );
-  await client.disconnect();
   return;
 };
