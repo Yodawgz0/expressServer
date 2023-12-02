@@ -1,7 +1,7 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { userLogin, userRegProps } from "../models/IUser.ts";
 import { config } from "dotenv";
-config(); 
+config();
 const uri: string = process.env["DB_URI"]!;
 const dbName: string = process.env["DB_NAME"]!;
 
@@ -39,21 +39,20 @@ export async function RegisterUser({
         console.log(err);
       });
   } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
     return result;
   }
 }
 
 export const getUserDetails = async (email: string) => {
-  await client
-    .connect()
-    .then()
-    .catch(() => {
-      return false;
-    });
   let result: string = "";
   try {
+    await client
+      .connect()
+      .then()
+      .catch((err) => {
+        console.log("Client Already Connected", err);
+      });
+
     const db = client.db(dbName);
     const collection = db.collection("users");
     const document = await collection.findOne({
@@ -65,7 +64,6 @@ export const getUserDetails = async (email: string) => {
       result = "user notfound";
     }
   } finally {
-    await client.close();
     return result;
   }
 };
@@ -95,7 +93,6 @@ export async function LoginUser({ email, password }: userLogin) {
       result = "user notfound";
     }
   } finally {
-    await client.close();
     return result;
   }
 }

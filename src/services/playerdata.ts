@@ -51,8 +51,6 @@ export async function AddPlayerData({
         console.log(err);
       });
   } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
     return result;
   }
 }
