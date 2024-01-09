@@ -20,7 +20,9 @@ wss.on("connection", (ws, _req: IncomingMessage) => {
   ws.on("message", (message) => {
     console.log(`Received message: ${message}`);
   });
-
+  ws.on("error", (error) => {
+    console.error("WebSocket error:", error);
+  });
   // Send a welcome message to the connected client
   ws.send("Welcome to the WebSocket server!");
 });
