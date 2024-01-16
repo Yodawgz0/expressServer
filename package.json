@@ -38,7 +38,6 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/multer": "^1.4.7",
     "@types/node": "^20.2.1",
-    "@types/ws": "^8.5.10",
     "concurrently": "^8.0.1",
     "nodemon": "^2.0.22",
     "ts-loader": "^9.4.4",
