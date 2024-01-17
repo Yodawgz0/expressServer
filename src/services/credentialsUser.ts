@@ -1,9 +1,22 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { userLogin, userRegProps } from "../models/IUser.ts";
 import { config } from "dotenv";
+import { createClient } from "redis";
 config();
 const uri: string = process.env["DB_URI"]!;
 const dbName: string = process.env["DB_NAME"]!;
+
+const redis_uri: string = process.env["REDIS_DB_URL"]!;
+const redis_password: string = process.env["REDIS_PASSWORD"]!;
+const redis_port: string = process.env["REDIS_PORT"]!;
+
+const redis_client = createClient({
+  password: redis_password,
+  socket: {
+    host: redis_uri,
+    port: parseInt(redis_port),
+  },
+});
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -86,6 +99,18 @@ export async function LoginUser({ email, password }: userLogin) {
     if (document !== null) {
       if (document["password"] === password) {
         result = "login successful";
+        await redis_client
+          .connect()
+          .then(async () => {
+            const keyExists = await redis_client.exists("onlineUsers");
+
+            if (keyExists) {
+              await redis_client.append("onlineUsers", `,${email}`);
+            } else {
+              await redis_client.set("onlineUsers", email);
+            }
+          })
+          .catch((err) => console.log(err));
       } else {
         result = "wrong password";
       }
