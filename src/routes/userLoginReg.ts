@@ -23,6 +23,16 @@ const uri: string = process.env["REDIS_DB_URL"]!;
 const password: string = process.env["REDIS_PASSWORD"]!;
 const port: string = process.env["REDIS_PORT"]!;
 
+const redis_uri: string = process.env["REDIS_DB_URL"]!;
+const redis_password: string = process.env["REDIS_PASSWORD"]!;
+const redis_port: string = process.env["REDIS_PORT"]!;
+const redis_client = createClient({
+  password: redis_password,
+  socket: {
+    host: redis_uri,
+    port: parseInt(redis_port),
+  },
+});
 const cookieOptions = {
   httpOnly: true,
   expires: new Date(Date.now() + 120 * 60 * 1000), // 2hrs
@@ -102,11 +112,32 @@ router.get(
   AccessTokenVerify,
   async (_req: Request, res: Response) => {
     const userDetails = await res.locals["userDetails"];
-    console.log(userDetails);
     const result = await getUserDetails(userDetails["email"]);
     await client.connect();
     client.del(result);
     res.clearCookie("jwtToken");
+    await redis_client
+      .connect()
+      .then(async () => {
+        const emailToRemove = userDetails["email"];
+        const currentValue = await redis_client.get("onlineUsers");
+        if (currentValue) {
+          const updatedValue = currentValue.replace(
+            new RegExp(`,${emailToRemove}`, "g"),
+            ""
+          );
+          await redis_client.set("onlineUsers", updatedValue);
+          console.log(
+            `Email '${emailToRemove}' removed from onlineUsers key successfully.`
+          );
+        } else {
+          console.log("onlineUsers key does not exist.");
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({ message: "Something went wrong!" });
+        console.error("Error connecting to Redis:", err);
+      });
     res.status(200).json({ message: "Logged out successfully" });
   }
 );
