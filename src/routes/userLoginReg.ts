@@ -120,6 +120,8 @@ router.get(
       .connect()
       .then(async () => {
         const emailToRemove = userDetails["email"];
+
+        await redis_client.del(emailToRemove)
         const currentValue = await redis_client.get("onlineUsers");
         if (currentValue) {
           const updatedValue = currentValue.replace(
