@@ -16,6 +16,17 @@ const client = createClient({
   },
 });
 
+const redis_uri: string = process.env["REDIS_DB_URL"]!;
+const redis_password: string = process.env["REDIS_PASSWORD"]!;
+const redis_port: string = process.env["REDIS_PORT"]!;
+const redis_client = createClient({
+  password: redis_password,
+  socket: {
+    host: redis_uri,
+    port: parseInt(redis_port),
+  },
+});
+
 export async function generateAccessToken(username: string) {
   await client
     .connect()
@@ -44,10 +55,18 @@ export const AccessTokenVerify = async (
   next: NextFunction
 ) => {
   const token = req.cookies["jwtToken"];
-  await client
+  const userDetails = await res.locals["userDetails"];
+  const emailToRemove = userDetails["email"];
+
+  await redis_client
     .connect()
-    .then(() => {})
-    .catch(() => {});
+    .then(async () => {
+      await redis_client.del(emailToRemove);
+    })
+    .catch((err) => {
+      res.status(500).json({ message: "Something went wrong!" });
+      console.error("Error connecting to Redis:", err);
+    });
   if (!token) {
     return res
       .clearCookie("jwtToken")
