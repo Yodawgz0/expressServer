@@ -19,13 +19,10 @@ router.use(express.json());
 
 config();
 
-const uri: string = process.env["REDIS_DB_URL"]!;
-const password: string = process.env["REDIS_PASSWORD"]!;
-const port: string = process.env["REDIS_PORT"]!;
-
 const redis_uri: string = process.env["REDIS_DB_URL"]!;
 const redis_password: string = process.env["REDIS_PASSWORD"]!;
 const redis_port: string = process.env["REDIS_PORT"]!;
+
 const redis_client = createClient({
   password: redis_password,
   socket: {
@@ -33,19 +30,12 @@ const redis_client = createClient({
     port: parseInt(redis_port),
   },
 });
+
 const cookieOptions = {
   httpOnly: true,
   expires: new Date(Date.now() + 120 * 60 * 1000), // 2hrs
   path: "/",
 };
-
-const client = createClient({
-  password: password,
-  socket: {
-    host: uri,
-    port: parseInt(port),
-  },
-});
 
 router.post("/login", async (_req: Request, res: Response) => {
   const userDetails: userLogin = {
@@ -113,15 +103,14 @@ router.get(
   async (_req: Request, res: Response) => {
     const userDetails = await res.locals["userDetails"];
     const result = await getUserDetails(userDetails["email"]);
-    await client.connect();
-    client.del(result);
+    await redis_client.connect();
+    redis_client.del(result);
     res.clearCookie("jwtToken");
     await redis_client
       .connect()
       .then(async () => {
         const emailToRemove = userDetails["email"];
-
-        await redis_client.del(emailToRemove)
+        await redis_client.del(emailToRemove);
         const currentValue = await redis_client.get("onlineUsers");
         if (currentValue) {
           const updatedValue = currentValue.replace(

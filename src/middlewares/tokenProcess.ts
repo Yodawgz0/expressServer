@@ -4,17 +4,6 @@ import jwt from "jsonwebtoken";
 import { createClient } from "redis";
 
 config();
-const uri: string = process.env["REDIS_DB_URL"]!;
-const password: string = process.env["REDIS_PASSWORD"]!;
-const port: string = process.env["REDIS_PORT"]!;
-
-const client = createClient({
-  password: password,
-  socket: {
-    host: uri,
-    port: parseInt(port),
-  },
-});
 
 const redis_uri: string = process.env["REDIS_DB_URL"]!;
 const redis_password: string = process.env["REDIS_PASSWORD"]!;
@@ -28,14 +17,14 @@ const redis_client = createClient({
 });
 
 export async function generateAccessToken(username: string) {
-  await client
+  await redis_client
     .connect()
     .then(() => {})
     .catch((err) => console.log(err));
   const jwtToken = jwt.sign({ email: username }, process.env["JWT_TOKEN"]!, {
     expiresIn: "2h",
   });
-  client
+  redis_client
     .set(
       username,
       JSON.stringify({
