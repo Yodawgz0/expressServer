@@ -10,3 +10,4 @@ This is build on top of the expressJS server
 it is under early stages of build and will evolve into something that I can looks back :)
 Redis has been added to the build , it stores the user sessions and its JWT token
 yes
+okay
