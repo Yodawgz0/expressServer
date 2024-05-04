@@ -8,7 +8,6 @@
   },
   "scripts": {
     "start": "nodemon",
-    "build": "webpack",
     "server": "nodemon"
   },
   "dependencies": {
