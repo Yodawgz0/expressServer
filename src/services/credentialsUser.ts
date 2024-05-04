@@ -110,7 +110,7 @@ export async function LoginUser({ email, password }: userLogin) {
               await redis_client.set("onlineUsers", email);
             }
           })
-          .catch((err) => console.log(err));
+          .catch((err: Error) => console.log(err.message));
       } else {
         result = "wrong password";
       }

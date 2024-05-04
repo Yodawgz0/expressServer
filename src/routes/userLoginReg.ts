@@ -102,15 +102,13 @@ router.get(
   AccessTokenVerify,
   async (_req: Request, res: Response) => {
     const userDetails = await res.locals["userDetails"];
-    const result = await getUserDetails(userDetails["email"]);
-    await redis_client.connect();
-    redis_client.del(result);
-    res.clearCookie("jwtToken");
+    // const result = await getUserDetails(userDetails["email"]);
     await redis_client
       .connect()
       .then(async () => {
         const emailToRemove = userDetails["email"];
         await redis_client.del(emailToRemove);
+
         const currentValue = await redis_client.get("onlineUsers");
         if (currentValue) {
           const updatedValue = currentValue.replace(
@@ -124,12 +122,14 @@ router.get(
         } else {
           console.log("onlineUsers key does not exist.");
         }
+        redis_client.quit();
+        res.status(200).json({ message: "Logged out successfully" });
       })
-      .catch((err) => {
+      .catch((err: Error) => {
+        console.log(err.message);
         res.status(500).json({ message: "Something went wrong!" });
         console.error("Error connecting to Redis:", err);
       });
-    res.status(200).json({ message: "Logged out successfully" });
   }
 );
 

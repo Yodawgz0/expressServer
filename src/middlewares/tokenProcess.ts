@@ -44,18 +44,6 @@ export const AccessTokenVerify = async (
   next: NextFunction
 ) => {
   const token = req.cookies["jwtToken"];
-  const userDetails = await res.locals["userDetails"];
-  const emailToRemove = userDetails["email"];
-
-  await redis_client
-    .connect()
-    .then(async () => {
-      await redis_client.del(emailToRemove);
-    })
-    .catch((err) => {
-      res.status(500).json({ message: "Something went wrong!" });
-      console.error("Error connecting to Redis:", err);
-    });
   if (!token) {
     return res
       .clearCookie("jwtToken")
@@ -66,12 +54,21 @@ export const AccessTokenVerify = async (
   jwt.verify(
     token,
     process.env["JWT_TOKEN"]!,
-    (err: any, decodedToken: any) => {
+    async (err: any, decodedToken: any) => {
       if (err) {
         return res.status(401).json({ message: "Invalid token" });
       }
       res.locals["userDetails"] = decodedToken;
-      // Token is valid, extract the user information if needed
+      // // Token is valid, extract the user information if needed
+      // await redis_client
+      //   .connect()
+      //   .then(async () => {
+      //     await redis_client.del(res.locals["userDetails"]["email"]);
+      //   })
+      //   .catch((err) => {
+      //     res.status(500).json({ message: "Something went wrong!" });
+      //     console.error("Error connecting to Redis:", err);
+      //   });
       return next();
     }
   );
