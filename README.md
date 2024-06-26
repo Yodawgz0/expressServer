@@ -11,3 +11,6 @@ it is under early stages of build and will evolve into something that I can look
 Redis has been added to the build , it stores the user sessions and its JWT token
 yes
 okay
+
+
+we can also add stuff on req in the middleware
